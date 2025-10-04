@@ -5,6 +5,10 @@ from discord.ext import commands
 from dotenv import load_dotenv
 import music_commands
 import moderation_commands
+from keep_alive import keep_alive
+
+keep_alive()
+
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
