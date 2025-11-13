@@ -1,4 +1,3 @@
-
 import os
 import discord
 from discord.ext import commands
@@ -8,7 +7,6 @@ import moderation_commands
 from keep_alive import keep_alive
 
 keep_alive()
-
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")

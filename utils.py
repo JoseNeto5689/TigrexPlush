@@ -7,6 +7,7 @@ def get_video_info(video_url: str):
             "noplaylist": True,
             "youtube_include_dash_manifest": False,
             "youtube_include_hls_manifest": False,
+            "extractor_args": {"youtube": "player_client=mweb" },
         }
 
     with yt_dlp.YoutubeDL(ydl_options) as ydl:

@@ -54,20 +54,6 @@ def setup(bot: commands.Bot):
         await interaction.response.send_message("Playback paused!")
 
 
-    @bot.tree.command(name="resume", description="Resume the currently paused song.")
-    async def resume(interaction: discord.Interaction):
-        voice_client = interaction.guild.voice_client
-
-        if voice_client is None:
-            return await interaction.response.send_message("I'm not in a voice channel.")
-
-        if not voice_client.is_paused():
-            return await interaction.response.send_message("I’m not paused right now.")
-        
-        voice_client.resume()
-        await interaction.response.send_message("Playback resumed!")
-
-
     @bot.tree.command(name="stop", description="Stop playback and clear the queue.")
     async def stop(interaction: discord.Interaction):        
         voice_client = interaction.guild.voice_client
@@ -112,6 +98,8 @@ def setup(bot: commands.Bot):
             "noplaylist": True,
             "youtube_include_dash_manifest": False,
             "youtube_include_hls_manifest": False,
+            "quiet": True,
+            "extractor_args": {"youtube": "player_client=mweb" },
         }
         
         if is_url(song_query):
@@ -166,7 +154,7 @@ def setup(bot: commands.Bot):
 
             ffmpeg_options = {
                 "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5",
-                "options": "-vn -b:a 96k -filter:a 'loudnorm=I=-24:LRA=7:tp=-2'",
+                "options": "-vn",
             }
 
             source = discord.FFmpegOpusAudio(audio_url, **ffmpeg_options)
@@ -206,6 +194,7 @@ def setup(bot: commands.Bot):
             "youtube_include_dash_manifest": False,
             "youtube_include_hls_manifest": False,
             "quiet": True,
+            "extractor_args": {"youtube": "player_client=mweb" },
         }
         
         query = "ytsearch5: " + song_query
@@ -278,7 +267,7 @@ def setup(bot: commands.Bot):
 
         await interaction.followup.send("Choose your favorite song:", view=MyView(), ephemeral=True)
         
-
+    """
     @bot.tree.command(name="playlist-create", description="Manage your playlist.")
     @app_commands.describe(playlist_name="Choose a playlist name")
     async def create_playlist(interaction: discord.Interaction, playlist_name: str):
@@ -385,4 +374,18 @@ def setup(bot: commands.Bot):
         storage.set_item(playlist_name, playlist)
         await interaction.response.send_message(f"Removed '{removed_song['title']}' from playlist '{playlist_name}'!")
         
+    
+    @bot.tree.command(name="resume", description="Resume the currently paused song.")
+    async def resume(interaction: discord.Interaction):
+        voice_client = interaction.guild.voice_client
+
+        if voice_client is None:
+            return await interaction.response.send_message("I'm not in a voice channel.")
+
+        if not voice_client.is_paused():
+            return await interaction.response.send_message("I’m not paused right now.")
         
+        voice_client.resume()
+        await interaction.response.send_message("Playback resumed!")
+        
+    """
