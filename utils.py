@@ -72,13 +72,3 @@ class LocalStorage:
 
     def __del__(self):
         self.conn.close()
-
-# ===== Exemplo de uso =====
-if __name__ == "__main__":
-    storage = LocalStorage()
-
-    playlist = storage.get_item("overdose")
-    playlist.append({"title": "New Song", "url": "http://example.com/newsong"})
-    storage.set_item("overdose", playlist)
-    print(storage.get_item("overdose"))
-

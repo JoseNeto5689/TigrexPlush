@@ -10,9 +10,11 @@ import asyncio # NEW
 import re
 from utils import get_video_info
 from utils import LocalStorage
+import recommendation
 
 SONG_QUEUES = {}
 actually_playing = {}
+AUTOPLAY = {}
 
 def is_url(text: str) -> bool:
 
@@ -35,11 +37,43 @@ def setup(bot: commands.Bot):
     
     @bot.tree.command(name="skip", description="Skips the current playing song")
     async def skip(interaction: discord.Interaction):
-        if interaction.guild.voice_client and (interaction.guild.voice_client.is_playing() or interaction.guild.voice_client.is_paused()):
-            interaction.guild.voice_client.stop()
-            await interaction.response.send_message("Skipped the current song.")
-        else:
-            await interaction.response.send_message("Not playing anything to skip.")
+        try:
+            vc = interaction.guild.voice_client
+
+            msg = ""
+            if vc and (vc.is_playing() or vc.is_paused()):
+                vc.stop()
+                msg = "⏭️ Skipped the current song."
+            else:
+                msg = "❌ Not playing anything to skip."
+            try:
+                if not interaction.response.is_done():
+                    await interaction.response.send_message(msg)
+                    return
+            except Exception:
+                pass
+
+            try:
+                await interaction.followup.send(msg)
+                return
+            except discord.errors.NotFound:
+                pass 
+
+            await interaction.channel.send(msg)
+
+        except Exception as e:
+            try:
+                if not interaction.response.is_done():
+                    await interaction.response.send_message(f"⚠️ Error: {e}")
+                    return
+            except:
+                pass
+
+            try:
+                await interaction.followup.send(f"⚠️ Error: {e}")
+            except:
+                await interaction.channel.send(f"⚠️ Error: {e}")
+
 
 
     @bot.tree.command(name="pause", description="Pause the currently playing song.")
@@ -63,7 +97,9 @@ def setup(bot: commands.Bot):
         guild_id_str = str(interaction.guild_id)
         if guild_id_str in SONG_QUEUES:
             SONG_QUEUES[guild_id_str].clear()
-
+            
+        actually_playing.pop(interaction.guild_id, None)
+        
         if voice_client.is_playing() or voice_client.is_paused():
             voice_client.stop()
 
@@ -165,8 +201,22 @@ def setup(bot: commands.Bot):
                 asyncio.run_coroutine_threadsafe(play_next_song(voice_client, guild_id, channel), bot.loop)
 
             voice_client.play(source, after=after_play)
-            #asyncio.create_task(channel.send(f"Now playing: **{title}**"))
         else:
+            if AUTOPLAY.get(int(guild_id), True):
+                current = actually_playing.get(int(guild_id), None)
+                if current:
+                    next_song = recommendation.get_youtube_recommendations(current["webpage_url"])
+                    print(next_song)
+                    song_info = get_video_info(next_song["url"])
+                    audio_url = song_info["url"]
+                    title = song_info["title"]  
+                    actually_playing[int(guild_id)] = {"audio_url": audio_url, "title": title, "webpage_url": song_info.get("webpage_url", None)}
+                    SONG_QUEUES[guild_id].append((audio_url, title, next_song["url"]))
+                    await channel.send(f"Autoplaying next song: **{title}**")
+                    await play_next_song(voice_client, guild_id, channel)
+                    return
+                    
+
             await voice_client.disconnect()
             SONG_QUEUES[guild_id] = deque()
 
@@ -267,7 +317,24 @@ def setup(bot: commands.Bot):
 
         await interaction.followup.send("Choose your favorite song:", view=MyView(), ephemeral=True)
         
+        
     """
+    @bot.tree.command(name="autoplay", description="Toggle autoplay mode.")
+    @app_commands.describe(mode="Choose 'on' or 'off'")
+    async def autoplay(interaction: discord.Interaction, mode: str):
+        mode = mode.lower()
+        if mode not in ("on", "off"):
+            return await interaction.response.send_message("Use: /autoplay on ou /autoplay off.")
+
+        guild_id = interaction.guild_id
+
+        AUTOPLAY[guild_id] = (mode == "on")
+
+        await interaction.response.send_message(
+            f"Autoplay **{mode.upper()}**!"
+        )    
+
+
     @bot.tree.command(name="playlist-create", description="Manage your playlist.")
     @app_commands.describe(playlist_name="Choose a playlist name")
     async def create_playlist(interaction: discord.Interaction, playlist_name: str):

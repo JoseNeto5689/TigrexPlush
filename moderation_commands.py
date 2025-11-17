@@ -15,10 +15,10 @@ def setup(bot):
         await interaction.channel.send(f"Ritual completed!")
 
 
-    @bot.tree.command(name="schedule", description="Agenda uma mensagem para um horário específico")
+    @bot.tree.command(name="schedule", description="Register a scheduled message")
     @app_commands.describe(
-        message="Mensagem que será enviada",
-        date_time="Data e horário no formato HH:MM DD-MM-YYYY"
+        message="Message to be sent",
+        date_time="Date and time in the format HH:MM DD-MM-YYYY"
     )
     async def schedule(interaction: discord.Interaction, message: str, date_time: str):
         try:
@@ -31,12 +31,12 @@ def setup(bot):
             delay = (target_time - now).total_seconds()
 
             if delay <= 0:
-                await interaction.response.send_message("❌ Essa data/hora já passou!", ephemeral=True)
+                await interaction.response.send_message("❌ This date/time has already passed!", ephemeral=True)
                 return
 
             await interaction.response.send_message(
-                f"✅ Mensagem agendada para **{date_time}**!\n"
-                f"Mensagem: `{message}`", ephemeral=True
+                f"✅ Message scheduled for **{date_time}**!\n"
+                f"Message: `{message}`", ephemeral=True
             )
 
             await asyncio.sleep(delay)
@@ -45,6 +45,6 @@ def setup(bot):
 
         except ValueError:
             await interaction.response.send_message(
-                "❌ Formato de data inválido! Use: `HH:MM DD-MM-YYYY`",
+                "❌ Invalid date format! Use: `HH:MM DD-MM-YYYY`",
                 ephemeral=True
             )
