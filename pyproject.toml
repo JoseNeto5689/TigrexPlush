@@ -9,9 +9,12 @@ dependencies = [
     "discord-py>=2.6.3",
     "dotenv>=0.9.9",
     "flask>=3.1.2",
+    "google-genai>=1.50.1",
+    "gtts>=2.5.4",
     "keep-alive>=0.0.1",
     "openai>=2.7.2",
     "pynacl>=1.6.0",
+    "pyttsx3>=2.99",
     "requests>=2.32.5",
     "yt-dlp>=2025.11.12",
 ]

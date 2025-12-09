@@ -41,9 +41,10 @@ def setup(bot: commands.Bot):
             vc = interaction.guild.voice_client
 
             msg = ""
-            if vc and (vc.is_playing() or vc.is_paused()):
+            if vc and (vc.is_playing() or vc.is_paused() or actually_playing.get(interaction.guild_id) != None):
                 vc.stop()
                 msg = "⏭️ Skipped the current song."
+                
             else:
                 msg = "❌ Not playing anything to skip."
             try:
@@ -318,7 +319,6 @@ def setup(bot: commands.Bot):
         await interaction.followup.send("Choose your favorite song:", view=MyView(), ephemeral=True)
         
         
-    """
     @bot.tree.command(name="autoplay", description="Toggle autoplay mode.")
     @app_commands.describe(mode="Choose 'on' or 'off'")
     async def autoplay(interaction: discord.Interaction, mode: str):
@@ -334,7 +334,7 @@ def setup(bot: commands.Bot):
             f"Autoplay **{mode.upper()}**!"
         )    
 
-
+    """
     @bot.tree.command(name="playlist-create", description="Manage your playlist.")
     @app_commands.describe(playlist_name="Choose a playlist name")
     async def create_playlist(interaction: discord.Interaction, playlist_name: str):

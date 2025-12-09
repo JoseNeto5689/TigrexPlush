@@ -47,6 +47,3 @@ def get_youtube_recommendations(url: str):
     url = items[0]["lockupViewModel"]["rendererContext"]["commandContext"]["onTap"]["innertubeCommand"]["commandMetadata"]["webCommandMetadata"]["url"]
     title = items[0]["lockupViewModel"]["metadata"]["lockupMetadataViewModel"]["title"]["content"]
     return {"title": title, "url": limpa_url_youtube(f"https://www.youtube.com/{url}")}
-
-
-print(get_youtube_recommendations("https://www.youtube.com/watch?v=0FCvzsVlXpQ"))
