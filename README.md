@@ -101,5 +101,3 @@ Basta escrever mensagens normalmente no Discord para que o bot interprete e exec
 * Caso o modelo Gemini retorne algo inválido, o bot tenta ajustar a resposta.
 
 ---
-
-Se quiser, posso gerar também documentação técnica, fluxograma do bot ou instruções de deploy.
