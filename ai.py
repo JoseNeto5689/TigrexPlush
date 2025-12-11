@@ -5,25 +5,6 @@ from datetime import datetime
 from google import genai
 from google.genai import types
 dotenv.load_dotenv()
-import requests
-
-
-def get_pokemon(name: str):
-    url = f"https://pokeapi.co/api/v2/pokemon/{name.lower()}"
-
-    try:
-        response = requests.get(url)
-        response.raise_for_status()  # Lança erro se status != 200
-
-        return response.json()
-
-    except requests.exceptions.HTTPError:
-        print(f'Pokémon "{name}" não encontrado.')
-        return None
-
-    except Exception as e:
-        print("Erro ao buscar Pokémon:", e)
-        return None
 
 possible_instructions = {
     0: ["ask_question: question_text", "Example: ask_question: What is the capital of France?"],
