@@ -1,9 +1,6 @@
-from openai import OpenAI
-import os
 import dotenv
 from datetime import datetime
 from google import genai
-from google.genai import types
 dotenv.load_dotenv()
 
 possible_instructions = {
@@ -24,7 +21,7 @@ client = genai.Client()
 
 def ask_question(question):
     response = client.models.generate_content(
-        model="gemini-3-flash-preview", contents=f"Seu nome é Tigrex Plush. Evite respostas longas. Evite usar saudações desnecessárias, e não pergunte de volta ao usuário. A hora atual eh {datetime.now().strftime('%H:%M %d-%m-%Y')} Tendo isso em mente, responda a seguinte pergunta: " + question
+        model="gemini-2.5-flash", contents=f"Seu nome é Tigrex Plush. Evite respostas longas. Evite usar saudações desnecessárias, e não pergunte de volta ao usuário. A hora atual eh {datetime.now().strftime('%H:%M %d-%m-%Y')} Tendo isso em mente, responda a seguinte pergunta: " + question
     )
 
     message = response.text
@@ -33,7 +30,7 @@ def ask_question(question):
 
 def check_instructions(text: str) -> bool:
     response = client.models.generate_content(
-        model="gemini-3-flash-preview", contents=f"Sao funcao eh retornar uma string contendo a funcao apropriada para o texto fornecido com os parametros necessarios e nenhum outro texto. As funcoes disponiveis sao: {instructions_to_string(possible_instructions)} \nA resposta deve ser semelhante a essa 'ask_question: parametro1, parametro2', se nao ouver um comando, retorne ask_question, a hora atual eh {datetime.now().strftime('%H:%M %d-%m-%Y')}. Com base nisso, responda: {text}"
+        model="gemini-2.5-flash", contents=f"Sao funcao eh retornar uma string contendo a funcao apropriada para o texto fornecido com os parametros necessarios e nenhum outro texto. As funcoes disponiveis sao: {instructions_to_string(possible_instructions)} \nA resposta deve ser semelhante a essa 'ask_question: parametro1, parametro2', se nao ouver um comando, retorne ask_question, a hora atual eh {datetime.now().strftime('%H:%M %d-%m-%Y')}. Com base nisso, responda: {text}"
     )
 
     message = response.text
