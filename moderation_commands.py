@@ -112,5 +112,5 @@ def setup(bot):
                 return
             
         except Exception as e:
-            await interaction.followup.send(f"❌ An error occurred while processing your request")
+            await interaction.followup.send(f"❌ An error occurred while processing your request: {e}")
             return
